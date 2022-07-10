@@ -6,6 +6,8 @@ import Image from 'next/image';
 import cls from 'classnames';
 
 import { fetchCoffeeStores } from '../../lib/coffee-stores';
+import { useContext } from 'react';
+import { StoreContext } from '../_app';
 
 import styles from '../../styles/coffee-store.module.css';
 
@@ -13,12 +15,13 @@ export async function getStaticProps(staticProps) {
 	const params = staticProps.params;
 
 	const coffeeStores = await fetchCoffeeStores();
+	const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
+		return coffeeStore.id.toString() === params.id; // dynamic id;
+	});
 
 	return {
 		props: {
-			coffeeStore: coffeeStores.find((coffeeStore) => {
-				return coffeeStore.id.toString() === params.id; // dynamic id;
-			}),
+			coffeeStore: findCoffeeStoreById ? findCoffeeStoreById : {},
 		},
 	};
 }
@@ -46,6 +49,12 @@ const CoffeeStore = (props) => {
 	if (router.isFallback) {
 		return <div>Loading... </div>;
 	}
+
+	const id = router.query.id;
+
+	const {
+		state: { coffeeStores },
+	} = useContext(StoreContext);
 
 	const { address, name, neighbourhood, imgUrl } = props.coffeeStore;
 
