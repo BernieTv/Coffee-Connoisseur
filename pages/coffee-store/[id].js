@@ -47,6 +47,7 @@ export async function getStaticPaths() {
 
 const CoffeeStore = (initialProps) => {
 	const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
+	const [votingCount, setVotingCount] = useState(1);
 	const router = useRouter();
 
 	const {
@@ -55,17 +56,48 @@ const CoffeeStore = (initialProps) => {
 
 	const id = router.query.id;
 
+	const handleCreateCoffeeStore = async (coffeeStore) => {
+		try {
+			const { id, name, voting, imgUrl, neighbourhood, address } = coffeeStore;
+
+			const response = await fetch('/api/createCoffeeStore', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					id,
+					name,
+					voting: 0,
+					imgUrl,
+					neighbourhood: neighbourhood || '',
+					address: address || '',
+				}),
+			});
+
+			const dbCoffeeStore = response.json();
+			console.log({ dbCoffeeStore });
+		} catch (error) {
+			console.error('Error creating coffee store', error);
+		}
+	};
+
 	useEffect(() => {
 		if (isEmpty(initialProps.coffeeStore)) {
 			if (coffeeStores.length > 0) {
-				const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
+				const coffeeStoreFromContext = coffeeStores.find((coffeeStore) => {
 					return coffeeStore.id.toString() === id; // dynamic id;
 				});
 
-				setCoffeeStore(findCoffeeStoreById);
+				if (coffeeStoreFromContext) {
+					setCoffeeStore(coffeeStoreFromContext);
+					handleCreateCoffeeStore(coffeeStoreFromContext);
+				}
 			}
+		} else {
+			handleCreateCoffeeStore(initialProps.coffeeStore);
 		}
-	}, [id]);
+	}, [id, initialProps.coffeeStore, coffeeStores]);
 
 	if (router.isFallback) {
 		return <div>Loading... </div>;
@@ -75,6 +107,8 @@ const CoffeeStore = (initialProps) => {
 
 	const handleUpvoteButton = () => {
 		console.log('handle upvote!');
+		let count = votingCount + 1;
+		setVotingCount(count);
 	};
 
 	return (
@@ -134,7 +168,7 @@ const CoffeeStore = (initialProps) => {
 							width='24'
 							height='24'
 						/>
-						<p className={styles.text}>1</p>
+						<p className={styles.text}>{votingCount}</p>
 					</div>
 
 					<button className={styles.upvoteButton} onClick={handleUpvoteButton}>

@@ -8,7 +8,7 @@ const createCoffeeStore = async (req, res) => {
 			if (id) {
 				const findCoffeeStoreRecords = await table
 					.select({
-						filterByFormula: `id=${id}`,
+						filterByFormula: `id="${id}"`,
 					})
 					.firstPage();
 
@@ -46,7 +46,7 @@ const createCoffeeStore = async (req, res) => {
 		} catch (error) {
 			console.error('Error creating or finding a store', error);
 			res.status(500);
-			res.jsoN({ message: 'Error creating or finding a store', error });
+			res.json({ message: 'Error creating or finding a store', error });
 		}
 	}
 };
