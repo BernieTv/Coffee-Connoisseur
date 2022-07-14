@@ -23,7 +23,6 @@ export default function Home(props) {
 	const { handleTrackLocation, locationErrorMsg, isFindingLocation } =
 		useTrackLocation();
 
-	// const [coffeeStores, setCoffeeStores] = useState('');
 	const [coffeeStoresError, setCoffeeStoresError] = useState(null);
 
 	const { dispatch, state } = useContext(StoreContext);
@@ -39,7 +38,6 @@ export default function Home(props) {
 
 					const coffeeStores = await fetchedCoffeeStores.json();
 
-					// setCoffeeStores(fetchedCoffeeStores);
 					dispatch({
 						type: ACTION_TYPES.SET_COFFEE_STORES,
 						payload: {
@@ -49,7 +47,6 @@ export default function Home(props) {
 
 					setCoffeeStoresError('');
 				} catch (error) {
-					console.log({ error });
 					setCoffeeStoresError(error.message);
 				}
 			}
@@ -59,7 +56,6 @@ export default function Home(props) {
 	}, [latLong, dispatch]);
 
 	const handleOnBannerBtnCLick = () => {
-		console.log('hi banner button');
 		handleTrackLocation();
 	};
 
