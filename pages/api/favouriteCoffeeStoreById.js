@@ -27,7 +27,7 @@ const favouriteCoffeeStoreById = async (req, res) => {
 						res.json(minifiedRecords);
 					}
 				} else {
-					res.json({ message: "Coffee store i doesn't exist", id });
+					res.json({ message: "Coffee store doesn't exist", id });
 				}
 			} else {
 				res.status(400);
